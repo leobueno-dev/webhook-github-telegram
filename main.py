@@ -1,6 +1,8 @@
-from fastapi import FastAPI, Request
-import os
 import httpx
+import os
+from fastapi import FastAPI, Request
+__version__ = "0.0.1"
+
 
 app = FastAPI()
 
