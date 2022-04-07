@@ -55,5 +55,6 @@ async def recWebHook(req: Request):
             for reviewers in body["pull_request"]["requested_reviewers"]:
                 name = reviewers["login"]
                 message = f"{message} *{name}*, "
-    message = f"{message}. \n"
-    await sendTgMessage(message)
+            message = f"{message}. \n"
+    if len(message) > 0:
+        await sendTgMessage(message)
