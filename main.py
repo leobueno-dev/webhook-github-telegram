@@ -48,7 +48,7 @@ async def recWebHook(req: Request):
         issue_url = body["issue"]["html_url"]
         isue_label = await getLabels(body["issue"]["labels"])
 
-        logging.warning(isue_label)
+        message = f"New issue([{issue_number}]({issue_url})) on [{issue_repo}]({issue_repo_url}) \nstatus: {issue_action} \nby: [{issue_login}]({issue_login}).\n\nTitle: *{issue_title}* \n\nDescription: {issue_desc} \n\nLabels: {isue_label}"
 
     elif event == "pull_request":  # check if event is a pull request
         # pprint.pprint(body)
