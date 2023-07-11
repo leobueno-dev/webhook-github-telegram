@@ -38,7 +38,18 @@ async def recWebHook(req: Request):
         repo_name = body["repository"]["name"]
         message = f"{starrer_username} has starred the [{repo_name}]({repo_url}). \n\n The Total Stars are {nos_stars}"
     elif event == "issues":  # check if event is an issue
-        logging.warning(body)
+        issue_number = body["issue"]["number"]
+        issue_action = body["action"]
+        issue_title = body["issue"]["title"]
+        issue_desc = body["issue"]["body"]
+        issue_login = body["sender"]["login"]
+        issue_repo = body["repository"]["full_name"]
+        issue_repo_url = body["repository"]["html_url"]
+        issue_url = body["issue"]["html_url"]
+        isue_label = getLabels(body["issue"]["labels"])
+
+        logging.warning(isue_label)
+
     elif event == "pull_request":  # check if event is a pull request
         # pprint.pprint(body)
         pr_number = body["number"]
@@ -61,3 +72,13 @@ async def recWebHook(req: Request):
             message = f"{message}. \n"
     if len(message) > 0:
         await sendTgMessage(message)
+
+
+async def getLabels(labels):
+    """
+    Get the labels of the issue or pull request
+    """
+    label_list = []
+    for label in labels:
+        label_list.append(label["name"])
+    return label_list
