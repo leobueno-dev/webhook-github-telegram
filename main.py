@@ -46,7 +46,7 @@ async def recWebHook(req: Request):
         issue_repo = body["repository"]["full_name"]
         issue_repo_url = body["repository"]["html_url"]
         issue_url = body["issue"]["html_url"]
-        isue_label = getLabels(body["issue"]["labels"])
+        isue_label = await getLabels(body["issue"]["labels"])
 
         logging.warning(isue_label)
 
