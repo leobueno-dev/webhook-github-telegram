@@ -38,7 +38,7 @@ async def recWebHook(req: Request):
         repo_name = body["repository"]["name"]
         message = f"{starrer_username} has starred the [{repo_name}]({repo_url}). \n\n The Total Stars are {nos_stars}"
     elif event == "issues":  # check if event is an issue
-        logging.info(body)
+        logging.warning(body)
     elif event == "pull_request":  # check if event is a pull request
         # pprint.pprint(body)
         pr_number = body["number"]
