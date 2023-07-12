@@ -32,14 +32,13 @@ async def recWebHook(req: Request):
     event = req.headers.get("X-Github-Event")
     message = ''
 
-    logging.warning(body)
-
     if event == "star":  # check if the event is a star
         nos_stars = body["repository"]["stargazers_count"]
         starrer_username = body["sender"]["login"]
         repo_url = body["repository"]["html_url"]
         repo_name = body["repository"]["name"]
         message = f"{starrer_username} has starred the [{repo_name}]({repo_url}). \n\n The Total Stars are {nos_stars}"
+
     elif event == "issues":  # check if event is an issue
         issue_number = body["issue"]["number"]
         issue_action = body["action"]
@@ -49,17 +48,18 @@ async def recWebHook(req: Request):
         issue_repo = body["repository"]["full_name"]
         issue_repo_url = body["repository"]["html_url"]
         issue_url = body["issue"]["html_url"]
-        isue_label = await getLabels(body["issue"]["labels"])
+        issue_label = await getLabels(body["issue"]["labels"])
+        issue_assignees = await getAssignees(body["issue"]["assignees"])
 
-        # if issue_action == "opened" or issue_action == "edited":
-        #     logging.warning("Issue Opened")
-        #     message = f"*Issue* ([{issue_number}]({issue_url})) on [{issue_repo}]({issue_repo_url}) \n\nstatus: {issue_action} \nby: [{issue_login}]({issue_login}).\n\nTitle: *{issue_title}* \n\nDescription: {issue_desc} \n\nLabels: {isue_label}"
+        if issue_action == "opened" or issue_action == "edited":
+            message = f"*Issue* ([{issue_number}]({issue_url})) on [{issue_repo}]({issue_repo_url}) \n\nstatus: {issue_action} \nby: [{issue_login}]({issue_login}).\n\nTitle: *{issue_title}* \n\nDescription: {issue_desc} \n\nLabels: {issue_label}"
+            message = message + f"\n\nAssigned to: {issue_assignees}"
 
-        # if issue_action == "assigned":
-        #     message = f"Issue ([{issue_number}]({issue_url})) on [{issue_repo}]({issue_repo_url}) *assigned* to: {issue_action} \n\nby: [{issue_login}]({issue_login}).\n\nTitle: *{issue_title}* \n\nLabels: {isue_label}"
+        if issue_action == "assigned":
+            message = f"Issue ([{issue_number}]({issue_url})) on [{issue_repo}]({issue_repo_url}) *assigned* to: {issue_action} \n\nby: [{issue_login}]({issue_login}).\n\nTitle: *{issue_title}* \n\nLabels: {issue_label}"
 
-        # if issue_action == "closed":
-        #     message = f"Issue ([{issue_number}]({issue_url})) on [{issue_repo}]({issue_repo_url}) *closed* by: [{issue_login}]({issue_login}).\n\nTitle: *{issue_title}* \n\n"
+        if issue_action == "closed":
+            message = f"Issue ([{issue_number}]({issue_url})) on [{issue_repo}]({issue_repo_url}) *closed* by: [{issue_login}]({issue_login}).\n\nTitle: *{issue_title}* \n\n"
 
     elif event == "pull_request":  # check if event is a pull request
         # pprint.pprint(body)
@@ -93,3 +93,14 @@ async def getLabels(labels):
     for label in labels:
         label_list.append(label["name"])
     return label_list
+
+
+async def getAssignees(assignees):
+    """
+    Get the assignees of the issue or pull request
+    """
+    assignee_list = []
+    for assignee in assignees:
+        name = f"[{assignee['login']}]({assignee['html_url']})"
+        assignee_list.append(name)
+    return assignee_list
