@@ -47,10 +47,11 @@ async def recWebHook(req: Request):
         issue_repo_url = body["repository"]["html_url"]
         issue_url = body["issue"]["html_url"]
         isue_label = await getLabels(body["issue"]["labels"])
-
-        if issue_action == "opened":
+        logging.warning(body)
+        
+        if issue_action == "opened" || issue_action == "edited":
             logging.warning("Issue Opened")
-            # message = f"*Issue* ([{issue_number}]({issue_url})) on [{issue_repo}]({issue_repo_url}) \n\nstatus: {issue_action} \nby: [{issue_login}]({issue_login}).\n\nTitle: *{issue_title}* \n\nDescription: {issue_desc} \n\nLabels: {isue_label}"
+            message = f"*Issue* ([{issue_number}]({issue_url})) on [{issue_repo}]({issue_repo_url}) \n\nstatus: {issue_action} \nby: [{issue_login}]({issue_login}).\n\nTitle: *{issue_title}* \n\nDescription: {issue_desc} \n\nLabels: {isue_label}"
 
         if issue_action == "assigned":
             message = f"Issue ([{issue_number}]({issue_url})) on [{issue_repo}]({issue_repo_url}) *assigned* to: {issue_action} \n\nby: [{issue_login}]({issue_login}).\n\nTitle: *{issue_title}* \n\nLabels: {isue_label}"
