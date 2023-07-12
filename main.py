@@ -31,6 +31,9 @@ async def recWebHook(req: Request):
     body = await req.json()
     event = req.headers.get("X-Github-Event")
     message = ''
+    
+    logging.warning(body)
+
     if event == "star":  # check if the event is a star
         nos_stars = body["repository"]["stargazers_count"]
         starrer_username = body["sender"]["login"]
@@ -47,7 +50,7 @@ async def recWebHook(req: Request):
         issue_repo_url = body["repository"]["html_url"]
         issue_url = body["issue"]["html_url"]
         isue_label = await getLabels(body["issue"]["labels"])
-        logging.warning(body)
+        
         
         if issue_action == "opened" || issue_action == "edited":
             logging.warning("Issue Opened")
